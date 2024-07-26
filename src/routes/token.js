@@ -8,9 +8,10 @@ const router = Router();
 
 router.get("/list", checkToken, async (req, res, next) => {
 	try {
-		if (req.user.id != 0) throw new NotAllowedExeption();
+		if (req.user.uuid != "00000000-0000-0000-0000-000000000000")
+			throw new NotAllowedExeption();
 
-		let tokens = await Token.findAll({ attributes: ["id", "name"] });
+		let tokens = await Token.findAll({ attributes: ["uuid", "name"] });
 		res.send(tokens);
 	} catch (err) {
 		next(err);
@@ -19,7 +20,8 @@ router.get("/list", checkToken, async (req, res, next) => {
 
 router.post("/add", checkToken, async (req, res, next) => {
 	try {
-		if (req.user.id != 0) throw new NotAllowedExeption();
+		if (req.user.uuid != "00000000-0000-0000-0000-000000000000")
+			throw new NotAllowedExeption();
 
 		const { name } = req.body;
 
@@ -34,19 +36,20 @@ router.post("/add", checkToken, async (req, res, next) => {
 	}
 });
 
-router.delete("/delete/:id", checkToken, async (req, res, next) => {
+router.delete("/delete/:uuid", checkToken, async (req, res, next) => {
 	try {
-		if (req.user.id != 0) throw new NotAllowedExeption();
+		if (req.user.uuid != "00000000-0000-0000-0000-000000000000")
+			throw new NotAllowedExeption();
 
-		const { id } = req.params;
+		const { uuid } = req.params;
 
-		await Token.destroy({ where: { id: id } });
+		await Token.destroy({ where: { uuid: uuid } });
 
 		res.send({
 			ok: true,
 			method: "DELETE",
-			path: "/tokens/delete/" + id,
-			message: "deleted token " + id,
+			path: "/tokens/delete/" + uuid,
+			message: "deleted token " + uuid,
 		});
 	} catch (err) {
 		next(err);

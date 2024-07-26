@@ -122,5 +122,9 @@ Template.hasMany(Message);
 Message.belongsTo(Template);
 
 logger.info("DATABASE", "BEGIN SYNC");
+// Fuck SQLite
+await connection.query("PRAGMA foreign_keys = false;");
 await connection.sync({ alter: true });
+// Fuck SQLite again
+await connection.query("PRAGMA foreign_keys = true;");
 logger.info("DATABASE", "SYNC DONE");

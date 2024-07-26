@@ -44,7 +44,6 @@ router.post("/new", checkToken, async (req, res, next) => {
 			TemplateUuid: t.uuid,
 		}).save();
 
-		await m.save();
 		res.send(m);
 	} catch (err) {
 		next(err);
@@ -91,8 +90,6 @@ router.post("/send/:uuid", checkToken, async (req, res, next) => {
 			copyTo: req.body.copyTo || "",
 			status: 1,
 		});
-
-		// await m.save({ fields: ["sendTo", "copyTo", "status"] });
 
 		await sendMail(html, m.sendTo, m.copyTo);
 

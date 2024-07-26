@@ -12,7 +12,11 @@ export async function checkToken(req, res, next) {
 	}
 
 	if (token == process.env.ADMIN_TOKEN) {
-		req.user = { token: "ADMIN", name: "ADMIN", id: 0 };
+		req.user = {
+			token: "ADMIN",
+			name: "ADMIN",
+			uuid: "00000000-0000-0000-0000-000000000000",
+		};
 		return next();
 	}
 

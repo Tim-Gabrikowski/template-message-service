@@ -1,12 +1,16 @@
 import { createTransport } from "nodemailer";
 
+// import and init dotenv (for environment files)
+import dotenv from "dotenv";
+dotenv.config();
+
 const smtpConfig = {
-	host: "smtp.eduport.hamburg.de",
-	port: 465,
+	host: process.env.SMTP_SERVER || "",
+	port: process.env.SMTP_PORT || 465,
 	secure: true,
 	auth: {
-		user: "tim.gabrikowski@kkg.hamburg.de",
-		pass: "T!Ga2007!?",
+		user: process.env.SMTP_USER,
+		pass: process.env.SMTP_PASS,
 	},
 };
 
@@ -16,9 +20,8 @@ const transporter = createTransport(smtpConfig);
 // Create an email message
 
 export async function sendMail(content, to, copy) {
-	console.log("Sending:", content, "to:", to, "and:", copy);
 	const mailOptions = {
-		from: "TiBoLi <tim.gabrikowski@kkg.hamburg.de>",
+		from: process.env.MAIL_SENDER,
 		to: to,
 		cc: copy,
 		subject: "Test Email",
