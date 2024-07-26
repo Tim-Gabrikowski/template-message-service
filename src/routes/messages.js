@@ -50,7 +50,7 @@ router.post("/new", checkToken, async (req, res, next) => {
 	}
 });
 
-router.post("/render/:uuid", checkToken, async (req, res, next) => {
+router.get("/render/:uuid", checkToken, async (req, res, next) => {
 	try {
 		let m = await Message.findByPk(req.params.uuid);
 		if (!m)

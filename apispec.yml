@@ -1,0 +1,494 @@
+openapi: 3.0.0
+info:
+    description: "Simple Template Engine Server for sending auto-generated Messages like Emails to clients"
+    version: 1.0.0
+    title: Message Service
+    contact:
+        email: tim@gabrikowski.de
+    license:
+        name: MIT
+
+tags:
+    - name: Tokens
+      description: Token and Auth
+    - name: Templates
+      description: Template Management
+    - name: Messages
+      description: Message creation and rendering
+    - name: Misc
+      description: Miscellaneous requests
+
+servers:
+    - url: http://wsl:3014
+
+paths:
+    /tokens/list:
+        get:
+            tags:
+                - Tokens
+            summary: Get a list of all Tokens
+            description: "List all the tokens in the System, without the actual Token value (Security reasons)"
+            operationId: list-tokens
+            responses:
+                "200":
+                    description: List of all Tokens (without the Tokens themselves)
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Token"
+                "403":
+                    $ref: "#/components/responses/notAllowed"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+
+    /tokens/add:
+        post:
+            tags:
+                - Tokens
+            summary: Add a new Token
+            description: "Registers a new Token"
+            operationId: add-tokens
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    default: "Default Token"
+            responses:
+                "200":
+                    description: Token created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Token"
+                "403":
+                    $ref: "#/components/responses/notAllowed"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+
+    /tokens/delete/{uuid}:
+        delete:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Tokens
+            summary: Delete Token
+            description: "Deletes a Token"
+            operationId: delete-tokens
+            responses:
+                "200":
+                    description: Token deleted
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ApiResponseSuccess"
+                "403":
+                    $ref: "#/components/responses/notAllowed"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /templates/list:
+        get:
+            tags:
+                - Templates
+            summary: List of Templates
+            description: "Returns an Array of all the templates in the system"
+            operationId: list-templates
+            responses:
+                "200":
+                    description: List of Templates
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Template"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /templates/get/{uuid}:
+        get:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Templates
+            summary: Get single Template
+            description: "Deletes a Token"
+            operationId: get-template
+            responses:
+                "200":
+                    description: The requested Template
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Template"
+                "404":
+                    $ref: "#/components/responses/notFound"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /templates/add:
+        post:
+            tags:
+                - Templates
+            summary: Add a new Template
+            description: "Registers a new Template (pug as template engine)"
+            operationId: add-template
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    default: "Example Template"
+                                content:
+                                    type: string
+                                    default: "h1 Example Content \n p Welcome"
+            responses:
+                "200":
+                    description: Template Created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Template"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+
+    /templates/edit/{uuid}:
+        put:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Templates
+            summary: Edit existing Template
+            description: "Edits a template (pug as template engine). Replaces the Values for content and name with given values"
+            operationId: edit-template
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    default: "Example Template"
+                                content:
+                                    type: string
+                                    default: "h1 Example Content \n p Welcome"
+            responses:
+                "200":
+                    description: Template Updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Template"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+
+    /messages/list:
+        get:
+            tags:
+                - Messages
+            summary: List of Templates
+            description: "Returns an Array of all the templates in the system"
+            operationId: list-messages
+            responses:
+                "200":
+                    description: List of Messages
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Message"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /messages/get/{uuid}:
+        get:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Messages
+            summary: Get single Template
+            description: "Deletes a Token"
+            operationId: get-message
+            responses:
+                "200":
+                    description: The requested Message
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Message"
+                "404":
+                    $ref: "#/components/responses/notFound"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /messages/new:
+        post:
+            tags:
+                - Messages
+            summary: Write a new Message
+            description: "Create a new Message by selecting the template and the payload"
+            operationId: new-message
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                template:
+                                    type: string
+                                    default: "Example Template"
+                                payload:
+                                    type: object
+                                type:
+                                    type: string
+                                    default: "email"
+
+            responses:
+                "200":
+                    description: Message Created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Message"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /messages/render/{uuid}:
+        get:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Messages
+            summary: Render a Message to HTML
+            description: "Renders the template with the messages payload to HTML"
+            operationId: render-message
+            responses:
+                "200":
+                    description: The requested Message in HTML
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    html:
+                                        type: string
+                "404":
+                    $ref: "#/components/responses/notFound"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /messages/send/{uuid}:
+        post:
+            parameters:
+                - in: path
+                  name: uuid
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Messages
+            summary: Send a message
+            description: "Sends a rendered message via Email to the supplied Mail Adress and Copy adress (cc)"
+            operationId: send-message
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                sendTo:
+                                    type: string
+                                    default: "test@example.com"
+                                copyTo:
+                                    type: string
+                                    default: "test2@example.com, test3@example.com"
+            responses:
+                "200":
+                    description: Template Updated
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    ok:
+                                        type: boolean
+                                    message:
+                                        $ref: "#/components/schemas/Message"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /:
+        get:
+            tags:
+                - Misc
+            summary: Healthcheck
+            description: "Returns true when the server is runnign"
+            operationId: misc-check
+            responses:
+                "200":
+                    description: Api Ok Response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ApiResponse"
+
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+
+    responses:
+        notAllowed:
+            description: Not Allowed to perform that action
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ApiResponseError"
+        notFound:
+            description: Requested Ressource was not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ApiResponseError"
+        unauthorised:
+            description: No (valid) Token given
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ApiResponseUnauthorised"
+
+    schemas:
+        Token:
+            type: object
+            properties:
+                uuid:
+                    type: string
+                token:
+                    type: string
+                    nullable: true
+                name:
+                    type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+                    nullable: true
+            xml:
+                name: Token
+        Template:
+            type: object
+            properties:
+                uuid:
+                    type: string
+                name:
+                    type: string
+                content:
+                    type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+                    nullable: true
+            xml:
+                name: Template
+        Message:
+            type: object
+            properties:
+                uuid:
+                    type: string
+                state:
+                    type: integer
+                content:
+                    type: string
+                type:
+                    type: string
+                sendTo:
+                    type: string
+                TemplateUuid:
+                    type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+                    nullable: true
+                Template:
+                    nullable: true
+                    allOf:
+                        - $ref: "#/components/schemas/Template"
+
+        ApiResponse:
+            type: object
+            properties:
+                ok:
+                    type: boolean
+                method:
+                    type: string
+                path:
+                    type: string
+        ApiResponseUnauthorised:
+            type: object
+            properties:
+                token:
+                    type: boolean
+                    default: true
+                valid:
+                    type: boolean
+                    default: false
+        ApiResponseError:
+            type: object
+            properties:
+                ok:
+                    type: boolean
+                    default: false
+                method:
+                    type: string
+                path:
+                    type: string
+                error:
+                    type: string
+                    nullable: true
+        ApiResponseSuccess:
+            type: object
+            properties:
+                ok:
+                    type: boolean
+                    default: true
+                method:
+                    type: string
+                path:
+                    type: string
+                message:
+                    type: string
+                    nullable: true
+
+security:
+    - bearerAuth: []
