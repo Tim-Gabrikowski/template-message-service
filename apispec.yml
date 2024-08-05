@@ -20,6 +20,7 @@ tags:
 
 servers:
     - url: http://wsl:3014
+    - url: http://0.0.0.0:3090
 
 paths:
     /tokens/list:
@@ -124,7 +125,7 @@ paths:
                       type: string
             tags:
                 - Templates
-            summary: Get single Template
+            summary: Get single Template by uuid
             description: "Deletes a Token"
             operationId: get-template
             responses:
@@ -138,7 +139,31 @@ paths:
                     $ref: "#/components/responses/notFound"
                 "401":
                     $ref: "#/components/responses/unauthorised"
-    /templates/add:
+    /templates/name/{name}:
+        get:
+            parameters:
+                - in: path
+                  name: name
+                  required: true
+                  schema:
+                      type: string
+            tags:
+                - Templates
+            summary: Get single Template by name
+            description: "Deletes a Token"
+            operationId: get-template-name
+            responses:
+                "200":
+                    description: The requested Template
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Template"
+                "404":
+                    $ref: "#/components/responses/notFound"
+                "401":
+                    $ref: "#/components/responses/unauthorised"
+    /templates/new:
         post:
             tags:
                 - Templates
@@ -167,6 +192,8 @@ paths:
                                 $ref: "#/components/schemas/Template"
                 "401":
                     $ref: "#/components/responses/unauthorised"
+                "409":
+                    $ref: "#/components/responses/conflict"
 
     /templates/edit/{uuid}:
         put:
@@ -375,6 +402,12 @@ components:
                         $ref: "#/components/schemas/ApiResponseError"
         notFound:
             description: Requested Ressource was not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ApiResponseError"
+        conflict:
+            description: The Request conflicts anything
             content:
                 application/json:
                     schema:

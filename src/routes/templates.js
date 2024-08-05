@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { checkToken } from "../middlewares/auth.js";
 import { Template } from "../db.js";
-import { NotFoundException } from "../misc/errors.js";
+import { NotFoundException, ConflictException } from "../misc/errors.js";
 
 const router = Router();
 
@@ -23,6 +23,20 @@ router.get("/get/:uuid", checkToken, async (req, res, next) => {
 		next(err);
 	}
 });
+router.get("/name/:name", checkToken, async (req, res, next) => {
+	try {
+		let t = await Template.findOne({ where: { name: req.params.name } });
+
+		if (!t)
+			throw new NotFoundException(
+				"Template '" + req.params.name + "' not found"
+			);
+
+		res.send(t);
+	} catch (err) {
+		next(err);
+	}
+});
 
 router.post("/new", checkToken, async (req, res, next) => {
 	try {
@@ -33,6 +47,13 @@ router.post("/new", checkToken, async (req, res, next) => {
 		await t.save();
 		res.send(t);
 	} catch (err) {
+		if ((err = "SequelizeUniqueConstraintError"))
+			return next(
+				new ConflictException(
+					"Name: " + req.body.name + " already in use"
+				)
+			);
+
 		next(err);
 	}
 });

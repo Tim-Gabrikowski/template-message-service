@@ -110,6 +110,7 @@ Template.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 			defaultValue: "",
+			unique: true,
 		},
 	},
 	{
