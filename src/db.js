@@ -69,6 +69,11 @@ Message.init(
 			defaultValue: "",
 			allowNull: false,
 		},
+		title: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: "no title",
+		},
 		type: {
 			type: DataTypes.STRING,
 			defaultValue: "email",

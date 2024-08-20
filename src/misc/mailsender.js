@@ -19,12 +19,12 @@ const transporter = createTransport(smtpConfig);
 
 // Create an email message
 
-export async function sendMail(content, to, copy) {
+export async function sendMail(content, title, to, copy) {
 	const mailOptions = {
 		from: process.env.MAIL_SENDER,
 		to: to,
 		cc: copy,
-		subject: "Test Email",
+		subject: title,
 		html: content,
 	};
 

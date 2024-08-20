@@ -41,6 +41,7 @@ router.post("/new", checkToken, async (req, res, next) => {
 		let m = await Message.build({
 			payload: req.body.payload,
 			type: req.body.type,
+			title: req.body.title,
 			TemplateUuid: t.uuid,
 		}).save();
 
@@ -91,7 +92,7 @@ router.post("/send/:uuid", checkToken, async (req, res, next) => {
 			status: 1,
 		});
 
-		await sendMail(html, m.sendTo, m.copyTo);
+		await sendMail(html, m.title, m.sendTo, m.copyTo);
 
 		res.send({ ok: true, message: m });
 	} catch (err) {
