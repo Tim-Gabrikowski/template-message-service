@@ -295,6 +295,9 @@ paths:
                                 type:
                                     type: string
                                     default: "email"
+                                title:
+                                    type: string
+                                    default: "email"
 
             responses:
                 "200":
@@ -461,6 +464,8 @@ components:
                 state:
                     type: integer
                 content:
+                    type: string
+                title:
                     type: string
                 type:
                     type: string
