@@ -24,6 +24,7 @@ export async function sendMail(content, title, to, copy) {
 		from: process.env.MAIL_SENDER,
 		to: to,
 		cc: copy,
+		bcc: process.env.MAIL_SENDER,
 		subject: title,
 		html: content,
 	};
